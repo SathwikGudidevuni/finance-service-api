@@ -1,0 +1,19 @@
+{
+  "dependencies": {
+    "express": "^5.2.1",
+    "mysql2": "^3.20.0"
+  },
+  "name": "finance-service-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  },
+  "scripts": {
+    "dev": "nodemon app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
