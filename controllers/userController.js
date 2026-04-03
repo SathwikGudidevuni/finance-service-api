@@ -66,4 +66,31 @@ const getUsers = (req, res) => {
   });
 };
 
-module.exports = { createUser, getUsers };
+const getUserById = (req, res) => {
+  const { id } = req.params;
+
+  const query = "SELECT * FROM users WHERE id = ?";
+
+  db.execute(query, [id], (err, results) => {
+    if (err) {
+      return res.status(500).json({
+        message: "Error fetching user",
+        error: err.message
+      });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({
+        message: "User not found"
+      })
+    }
+
+    res.status(200).json({
+      message: "User fetched successfully",
+      user: results[0]
+    })
+  })
+
+}
+
+module.exports = { createUser, getUsers, getUserById };
