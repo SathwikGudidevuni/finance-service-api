@@ -1,27 +1,32 @@
 const db = require("../config/db");
 
-const createUser = (req, res) => {
-  const { name, role, status } = req.body;
-
+const validateUserData = (name, role, status) => {
   const validRoles = ["viewer", "analyst", "admin"];
   const validStatuses = ["active", "inactive"];
 
   if (!name || !role || !status) {
-    return res.status(400).json({
-      message: "Name, role, and status are required"
-    });
+    return "Name, role, and status are required"
   }
 
   if (!validRoles.includes(role)) {
-    return res.status(400).json({
-      message: "Role must be viewer, analyst, or admin"
-    });
+    return "Role must be viewer, analyst, or admin"
   }
 
   if (!validStatuses.includes(status)) {
+    return "Status must be active or inactive"
+  }
+
+  return null;
+}
+const createUser = (req, res) => {
+  const { name, role, status } = req.body;
+
+  const validationError = validateUserData(name, role, status);
+
+  if (validationError) {
     return res.status(400).json({
-      message: "Status must be active or inactive"
-    });
+      message: validationError
+    })
   }
 
   const query = "INSERT INTO users (name, role, status) VALUES (?, ?, ?)";
@@ -94,25 +99,12 @@ const updateUser = (req, res) => {
   const { id } = req.params;
   const { name, role, status } = req.body;
 
-  const validRoles = ["viewer", "analyst", "admin"];
-  const validStatuses = ["active", "inactive"];
+  const validationError = validateUserData(name, role, status);
 
-  if (!name || !role || !status) {
+  if (validationError) {
     return res.status(400).json({
-      message: "Name, role, and status are required"
-    });
-  }
-
-  if (!validRoles.includes(role)) {
-    return res.status(400).json({
-      message: "Role must be viewer, analyst, or admin"
-    });
-  }
-
-  if (!validStatuses.includes(status)) {
-    return res.status(400).json({
-      message: "Status must be active or inactive"
-    });
+      message: validationError
+    })
   }
 
   const query = "UPDATE users SET name = ?, role = ?, status = ? WHERE id = ?";
@@ -120,7 +112,7 @@ const updateUser = (req, res) => {
   db.execute(query, [name, role, status, id], (err, result) => {
     if (err) {
       return res.status(500).json({
-        message: "Error updataing user",
+        message: "Error updating user",
         error: err.message
       });
     }
