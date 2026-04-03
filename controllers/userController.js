@@ -24,8 +24,6 @@ const createUser = (req, res) => {
     });
   }
 
-
-
   const query = "INSERT INTO users (name, role, status) VALUES (?, ?, ?)";
 
   db.execute(query, [name, role, status], (err, result) => {
@@ -90,7 +88,59 @@ const getUserById = (req, res) => {
       user: results[0]
     })
   })
+};
 
-}
+const updateUser = (req, res) => {
+  const { id } = req.params;
+  const { name, role, status } = req.body;
 
-module.exports = { createUser, getUsers, getUserById };
+  const validRoles = ["viewer", "analyst", "admin"];
+  const validStatuses = ["active", "inactive"];
+
+  if (!name || !role || !status) {
+    return res.status(400).json({
+      message: "Name, role, and status are required"
+    });
+  }
+
+  if (!validRoles.includes(role)) {
+    return res.status(400).json({
+      message: "Role must be viewer, analyst, or admin"
+    });
+  }
+
+  if (!validStatuses.includes(status)) {
+    return res.status(400).json({
+      message: "Status must be active or inactive"
+    });
+  }
+
+  const query = "UPDATE users SET name = ?, role = ?, status = ? WHERE id = ?";
+
+  db.execute(query, [name, role, status, id], (err, result) => {
+    if (err) {
+      return res.status(500).json({
+        message: "Error updataing user",
+        error: err.message
+      });
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({
+        message: "User not found"
+      });
+    }
+
+    res.status(200).json({
+      message: "User updated successfully",
+      user: {
+        id: Number(id),
+        name,
+        role,
+        status
+      }
+    });
+  });
+};
+
+module.exports = { createUser, getUsers, getUserById, updateUser };
