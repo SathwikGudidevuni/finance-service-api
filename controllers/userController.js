@@ -3,11 +3,28 @@ const db = require("../config/db");
 const createUser = (req, res) => {
   const { name, role, status } = req.body;
 
+  const validRoles = ["viewer", "analyst", "admin"];
+  const validStatuses = ["active", "inactive"];
+
   if (!name || !role || !status) {
     return res.status(400).json({
       message: "Name, role, and status are required"
     });
   }
+
+  if (!validRoles.includes(role)) {
+    return res.status(400).json({
+      message: "Role must be viewer, analyst, or admin"
+    });
+  }
+
+  if (!validStatuses.includes(status)) {
+    return res.status(400).json({
+      message: "Status must be active or inactive"
+    });
+  }
+
+
 
   const query = "INSERT INTO users (name, role, status) VALUES (?, ?, ?)";
 
