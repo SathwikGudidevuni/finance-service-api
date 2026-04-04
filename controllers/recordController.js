@@ -1,6 +1,6 @@
 const db = require("../config/db");
 
-const validateRecordDate = (amount, type, category, record_date) => {
+const validateRecordData = (amount, type, category, record_date) => {
   const validTypes = ["income", "expense"];
 
   if (!amount || !type || !category || !record_date) {
@@ -17,7 +17,7 @@ const validateRecordDate = (amount, type, category, record_date) => {
 const createRecord = (req, res) => {
   const { amount, type, category, record_date, notes } = req.body;
 
-  const validateError = validateRecordDate(amount, type, category, record_date);
+  const validateError = validateRecordData(amount, type, category, record_date);
 
   if (validateError) {
     return res.status(400).json({
@@ -68,7 +68,7 @@ const getRecords = (req, res) => {
 };
 
 const getRecordbyId = (req, res) => {
-  const {id} = req.params;
+  const { id } = req.params;
 
   const query = "SELECT * FROM financial_records WHERE id = ?";
 
@@ -88,9 +88,76 @@ const getRecordbyId = (req, res) => {
 
     res.status(200).json({
       message: "Financial record fetched successfully",
-      record: results
+      record: results[0]
     });
   });
 };
 
-module.exports = { createRecord, getRecords, getRecordbyId};
+const updateRecord = (req, res) => {
+  const { id } = req.params;
+  const { amount, type, category, record_date, notes } = req.body;
+
+  const validateError = validateRecordData(amount, type, category, record_date);
+
+  if (validateError) {
+    return res.status(400).json({
+      message: validateError
+    });
+  }
+
+  const query = "UPDATE financial_records SET amount = ?, type = ?, category = ?, record_date = ?, notes = ? WHERE id = ?";
+
+  db.execute(query, [amount, type, category, record_date, notes || null, id], (err, result) => {
+    if (err) {
+      return res.status(500).json({
+        message: "Error updating financial record",
+        error: err.message
+      });
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({
+        message: "Financial record not found"
+      });
+    }
+
+    res.status(200).json({
+      message: "Financial record updated successfully",
+      record: {
+        id: Number(id),
+        amount,
+        type,
+        category,
+        record_date,
+        notes: notes || null
+      }
+    });
+  });
+};
+
+const deleteRecord = (req, res) => {
+  const { id } = req.params;
+
+  const query = "DELETE FROM financial_records WHERE id = ?";
+
+  db.execute(query, [id], (err, result) => {
+    if (err) {
+      return res.status(500).json({
+        message: "Error deleting financial record",
+        error: err.message
+      });
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({
+        message: "Financial record not found"
+      });
+    }
+
+    res.status(200).json({
+      message: "Financial record deleted successfully"
+    });
+  });
+};
+
+module.exports = { createRecord, getRecords, getRecordbyId, updateRecord, deleteRecord };
