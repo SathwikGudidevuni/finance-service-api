@@ -50,9 +50,25 @@ const createRecord = (req, res) => {
 };
 
 const getRecords = (req, res) => {
-  const query = "SELECT * FROM financial_records";
+  const { type, category, record_date } = req.query;
 
-  db.query(query, (err, results) => {
+  let query = "SELECT * FROM financial_records WHERE 1=1";
+  const values = [];
+
+  if (type) {
+    query += " AND type = ?";
+    values.push(type);
+  }
+  if (category) {
+    query += " AND category = ?";
+    values.push(category);
+  }
+  if (record_date) {
+    query += " AND record_date = ?";
+    values.push(record_date);
+  }
+
+  db.execute(query, values, (err, results) => {
     if (err) {
       return res.status(500).json({
         message: "Error fetching financial records",
@@ -62,7 +78,7 @@ const getRecords = (req, res) => {
 
     res.status(200).json({
       message: "Financial records fetched successfully",
-      record: results
+      records: results
     });
   });
 };
