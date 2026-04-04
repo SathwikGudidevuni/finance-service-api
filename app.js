@@ -5,6 +5,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 const usersRoutes = require("./routes/userRoutes");
+const dashboardRoutes = require("./routes/dashboardRoutes");
 
 app.use(express.json());
 
@@ -12,6 +13,7 @@ app.get("/", (req, res) => {
   res.send("Server is running successfully!");
 });
 
+app.use("/", dashboardRoutes);
 app.use("/", usersRoutes);
 
 app.listen(PORT, () => {
