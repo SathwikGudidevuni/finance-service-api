@@ -78,9 +78,9 @@ finance-service-api/
 │   ├── dashboardRoutes.js
 │   ├── recordRoutes.js
 │   └── userRoutes.js
-│── schema.sql
 │── app.js
 │── package.json
+│── schema.sql
 │── README.md
 ```
 
@@ -106,7 +106,7 @@ npm install
 DB_HOST=localhost
 DB_USER=root
 DB_PASSWORD=yourpassword
-DB_NAME=finance_db
+DB_NAME=finance_service_db
 PORT=3000
 ```
 
@@ -128,7 +128,32 @@ npm run dev
 ## Base URL
 
 ```
-http://localhost:3000/api
+http://localhost:3000
+```
+
+## Authentication & Role-Based Access Control
+
+This API uses role-based access control (RBAC) via HTTP headers. Include the `role` header in your requests:
+
+```
+role: admin     # Full access (create, update, delete)
+role: analyst  # View users and financial records
+role: viewer   # Access dashboard only
+```
+
+Example request with role header in Postman:
+- **Method**: POST
+- **URL**: `http://localhost:3000/users`
+- **Headers**:
+  - `Content-Type`: `application/json`
+  - `role`: `admin`
+- **Body** (raw JSON):
+```json
+{
+  "name": "John",
+  "role": "analyst",
+  "status": "active"
+}
 ```
 
 ## API Documentation
@@ -145,7 +170,7 @@ Import this file into Postman to test all endpoints.
 
 ### Create User
 
-**POST /api/users**
+**POST /users**
 
 Request:
 
@@ -175,7 +200,7 @@ Response:
 
 ### Create Financial Record
 
-**POST /api/records**
+**POST /records**
 
 Request:
 
@@ -204,6 +229,103 @@ Response:
     }
 }
 ```
+
+---
+
+### Get Dashboard Summary
+
+**GET /dashboard**
+
+Request (with role header) in Postman:
+- **Method**: GET
+- **URL**: `http://localhost:3000/dashboard`
+- **Headers**:
+  - `role`: `viewer`
+
+Response:
+```json
+{
+    "totalIncome": 3000.00,
+    "totalExpenses": 600.00,
+    "netBalance": 2400.00,
+    "categoryTotals": {
+        "Food": 600.00,
+        "Salary": 3000.00
+    },
+    "recentActivity": [
+        {
+            "id": 9,
+            "amount": "600.00",
+            "type": "expense",
+            "category": "Food",
+            "record_date": "2026-04-10",
+            "notes": "Lunch"
+        }
+    ],
+    "monthlyTrends": [
+        {
+            "month": "2026-04",
+            "income": 3000.00,
+            "expenses": 600.00
+        }
+    ]
+}
+```
+
+---
+
+### Get Filtered Financial Records
+
+**GET /records**
+
+Request with query parameters in Postman:
+- **Method**: GET
+- **URL**: `http://localhost:3000/records?type=expense&category=Food&page=1&limit=10`
+- **Headers**:
+  - `role`: `analyst`
+
+Response:
+```json
+{
+    "message": "Financial records fetched successfully",
+    "page": 1,
+    "limit": 10,
+    "records": [
+        {
+            "id": 8,
+            "amount": "600.00",
+            "type": "expense",
+            "category": "Food",
+            "record_date": "2026-04-09T18:30:00.000Z",
+            "notes": "Lunch"
+        },
+        {
+            "id": 9,
+            "amount": "600.00",
+            "type": "expense",
+            "category": "Food",
+            "record_date": "2026-04-09T18:30:00.000Z",
+            "notes": "Lunch"
+        },
+        {
+            "id": 6,
+            "amount": "1500.00",
+            "type": "expense",
+            "category": "Food",
+            "record_date": "2026-04-04T18:30:00.000Z",
+            "notes": "Lunch and groceries"
+        }
+    ]
+}
+```
+
+**Query Parameters:**
+- `type`: Filter by "income" or "expense"
+- `category`: Filter by category (Food, Transport, Utilities, etc.)
+- `startDate`: Filter records from this date (YYYY-MM-DD)
+- `endDate`: Filter records until this date (YYYY-MM-DD)
+- `page`: Page number for pagination (default: 1)
+- `limit`: Number of records per page (default: 10)
 
 ## Additional Enhancements Implemented
 
