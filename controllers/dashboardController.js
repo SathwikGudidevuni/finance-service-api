@@ -1,13 +1,14 @@
 const db = require("../config/db");
 
 const getDashboard = (req, res) => {
-  const incomeQuery = "SELECT SUM(amount) AS totalIncome FROM financial_records WHERE type = 'income'";
-  const expenseQuery = "SELECT SUM(amount) AS totalExpenses FROM financial_records WHERE type = 'expense'";
-  const categoryQuery = "SELECT category, SUM(amount) AS totalAmount FROM financial_records GROUP BY category";
-  const recentActivityQuery = "SELECT * FROM financial_records ORDER BY record_date DESC, id DESC LIMIT 5";
+  const incomeQuery = "SELECT SUM(amount) AS totalIncome FROM financial_records WHERE type = 'income' AND is_deleted = FALSE";
+  const expenseQuery = "SELECT SUM(amount) AS totalExpenses FROM financial_records WHERE type = 'expense' AND is_deleted = FALSE";
+  const categoryQuery = "SELECT category, SUM(amount) AS totalAmount FROM financial_records WHERE is_deleted = FALSE GROUP BY category";
+  const recentActivityQuery = "SELECT id, amount, type, category, record_date, notes FROM financial_records WHERE is_deleted = FALSE ORDER BY record_date DESC, id DESC LIMIT 5";
   const monthlyTrendsQuery = `
     SELECT DATE_FORMAT(record_date, '%Y-%m') AS month, type, SUM(amount) AS totalAmount
     FROM financial_records
+    WHERE is_deleted = FALSE
     GROUP BY DATE_FORMAT(record_date, '%Y-%m'), type
     ORDER BY month DESC
   `;

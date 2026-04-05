@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS financial_records (
     type ENUM('income', 'expense') NOT NULL,
     category VARCHAR(100) NOT NULL,
     record_date DATE NOT NULL,
-    notes TEXT
+    notes TEXT,
+    is_deleted BOOLEAN DEFAULT FALSE
 );
 

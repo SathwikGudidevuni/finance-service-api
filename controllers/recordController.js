@@ -50,9 +50,9 @@ const createRecord = (req, res) => {
 };
 
 const getRecords = (req, res) => {
-  const { type, category, record_date } = req.query;
+  const { type, category, record_date, page = 1, limit = 5 } = req.query;
 
-  let query = "SELECT * FROM financial_records WHERE 1=1";
+  let query = "SELECT id, amount, type, category, record_date, notes FROM financial_records WHERE is_deleted = FALSE";
   const values = [];
 
   if (type) {
@@ -68,7 +68,13 @@ const getRecords = (req, res) => {
     values.push(record_date);
   }
 
-  db.execute(query, values, (err, results) => {
+  const pageNumber = Number(page) || 1;
+  const limitNumber = Number(limit) || 10;
+  const offset = (pageNumber - 1) * limitNumber;
+
+  query += ` ORDER BY record_date DESC LIMIT ${limitNumber} OFFSET ${offset}`;
+
+  db.query(query, values, (err, results) => {
     if (err) {
       return res.status(500).json({
         message: "Error fetching financial records",
@@ -78,15 +84,17 @@ const getRecords = (req, res) => {
 
     res.status(200).json({
       message: "Financial records fetched successfully",
+      page: pageNumber,
+      limit: limitNumber,
       records: results
     });
   });
 };
 
-const getRecordbyId = (req, res) => {
+const getRecordById = (req, res) => {
   const { id } = req.params;
 
-  const query = "SELECT * FROM financial_records WHERE id = ?";
+  const query = "SELECT id, amount, type, category, record_date, notes FROM financial_records WHERE id = ? AND is_deleted = FALSE";
 
   db.execute(query, [id], (err, results) => {
     if (err) {
@@ -121,7 +129,7 @@ const updateRecord = (req, res) => {
     });
   }
 
-  const query = "UPDATE financial_records SET amount = ?, type = ?, category = ?, record_date = ?, notes = ? WHERE id = ?";
+  const query = "UPDATE financial_records SET amount = ?, type = ?, category = ?, record_date = ?, notes = ? WHERE id = ? AND is_deleted = FALSE";
 
   db.execute(query, [amount, type, category, record_date, notes || null, id], (err, result) => {
     if (err) {
@@ -154,7 +162,7 @@ const updateRecord = (req, res) => {
 const deleteRecord = (req, res) => {
   const { id } = req.params;
 
-  const query = "DELETE FROM financial_records WHERE id = ?";
+  const query = "UPDATE financial_records SET is_deleted = TRUE WHERE id = ? AND is_deleted = FALSE";
 
   db.execute(query, [id], (err, result) => {
     if (err) {
@@ -176,4 +184,4 @@ const deleteRecord = (req, res) => {
   });
 };
 
-module.exports = { createRecord, getRecords, getRecordbyId, updateRecord, deleteRecord };
+module.exports = { createRecord, getRecords, getRecordById, updateRecord, deleteRecord };
