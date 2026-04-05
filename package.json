@@ -8,12 +8,11 @@
   "name": "finance-service-api",
   "version": "1.0.0",
   "description": "",
-  "main": "app.js",
+  "main": "index.js",
   "devDependencies": {
     "nodemon": "^3.1.14"
   },
   "scripts": {
-    "start": "node app.js",
     "dev": "nodemon app.js"
   },
   "keywords": [],
