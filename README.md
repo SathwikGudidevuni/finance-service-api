@@ -322,8 +322,7 @@ Response:
 **Query Parameters:**
 - `type`: Filter by "income" or "expense"
 - `category`: Filter by category (Food, Transport, Utilities, etc.)
-- `startDate`: Filter records from this date (YYYY-MM-DD)
-- `endDate`: Filter records until this date (YYYY-MM-DD)
+- `record_date`: Filter records from this date (YYYY-MM-DD)
 - `page`: Page number for pagination (default: 1)
 - `limit`: Number of records per page (default: 10)
 
