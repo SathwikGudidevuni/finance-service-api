@@ -11,7 +11,7 @@
       "name": "Users",
       "item": [
         {
-          "name": "New Request",
+          "name": "Create User",
           "request": {
             "method": "POST",
             "header": [
@@ -45,7 +45,7 @@
           "response": []
         },
         {
-          "name": "New Request",
+          "name": "Get All users",
           "request": {
             "method": "GET",
             "header": [
@@ -70,7 +70,7 @@
           "response": []
         },
         {
-          "name": "New Request",
+          "name": "Get User By ID",
           "protocolProfileBehavior": {
             "disableBodyPruning": true
           },
@@ -108,7 +108,7 @@
           "response": []
         },
         {
-          "name": "New Request",
+          "name": "Update User",
           "request": {
             "method": "PUT",
             "header": [
@@ -143,7 +143,7 @@
           "response": []
         },
         {
-          "name": "New Request",
+          "name": "Delete User",
           "request": {
             "method": "DELETE",
             "header": [
@@ -174,7 +174,7 @@
       "name": "Records",
       "item": [
         {
-          "name": "New Request",
+          "name": "Create Financial Record",
           "request": {
             "method": "POST",
             "header": [
@@ -208,7 +208,7 @@
           "response": []
         },
         {
-          "name": "New Request",
+          "name": "Get All Financial Records",
           "request": {
             "method": "GET",
             "header": [
@@ -233,7 +233,7 @@
           "response": []
         },
         {
-          "name": "New Request",
+          "name": "Get Financial Record By ID",
           "request": {
             "method": "GET",
             "header": [
@@ -259,7 +259,7 @@
           "response": []
         },
         {
-          "name": "New Request",
+          "name": "Update Financial Record",
           "request": {
             "method": "PUT",
             "header": [
@@ -294,7 +294,7 @@
           "response": []
         },
         {
-          "name": "New Request",
+          "name": "Delete Financial Record",
           "request": {
             "method": "DELETE",
             "header": [
@@ -320,7 +320,7 @@
           "response": []
         },
         {
-          "name": "New Request",
+          "name": "Filter Records By Type",
           "request": {
             "method": "GET",
             "header": [
@@ -351,7 +351,7 @@
           "response": []
         },
         {
-          "name": "New Request",
+          "name": "Filter Records By Category",
           "request": {
             "method": "GET",
             "header": [
@@ -382,7 +382,7 @@
           "response": []
         },
         {
-          "name": "New Request",
+          "name": "Filter Records By Date",
           "request": {
             "method": "GET",
             "header": [
@@ -413,7 +413,7 @@
           "response": []
         },
         {
-          "name": "New Request",
+          "name": "Get Records With Pagination",
           "request": {
             "method": "GET",
             "header": [
@@ -453,7 +453,7 @@
       "name": "Dashboard",
       "item": [
         {
-          "name": "New Request",
+          "name": "Get Dashboard Summary",
           "request": {
             "method": "GET",
             "header": [
